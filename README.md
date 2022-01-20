@@ -9,6 +9,6 @@
 Остальные директории вспомогательные, создаются при необходимости разработчиком
 
 ## Запуск проекта
-
+`brew services start mongodb-community@4.4` - запуск mongodb
 `npm run start` — запускает сервер   
 `npm run dev` — запускает сервер с hot-reload
