@@ -1,0 +1,7 @@
+{
+  rules: {
+    'no-underscore-dangle': ['off', { allow: ['foo_', '_bar'] }],
+    'no-console': 'off',
+  },
+  extends: ['plugin:react/recommended', 'airbnb']
+}
