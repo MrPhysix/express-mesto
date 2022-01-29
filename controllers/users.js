@@ -9,8 +9,12 @@ function updateUserAvatar(req, res) {
       runValidators: true, // данные будут валидированы перед изменением
     },
   )
+    .orFail(new Error(`Пользователь ${req.user._id} не найден`))
     .then((user) => res.status(200).send(user))
-    .catch((err) => res.status(500).send({ message: 'Произошла ошибка' }));
+    .catch((err) => {
+      if (err.name === 'NotFound') res.status(404).send({ message: 'Пользователь не найден' });
+      else res.status(500).send({ message: 'Произошла ошибка' });
+    });
 }
 
 function updateUser(req, res) {
@@ -23,8 +27,12 @@ function updateUser(req, res) {
       runValidators: true, // данные будут валидированы перед изменением
     },
   )
+    .orFail(new Error(`Пользователь ${req.user._id} не найден`))
     .then((user) => res.status(200).send(user))
-    .catch((err) => res.status(500).send({ message: 'Произошла ошибка' }));
+    .catch((err) => {
+      if (err.name === 'NotFound') res.status(404).send({ message: 'Пользователь не найден' });
+      else res.status(500).send({ message: 'Произошла ошибка' });
+    });
 }
 
 function getUsers(req, res) {
@@ -44,16 +52,24 @@ function createUser(req, res) {
             .map((error) => error.message)
             .join(', ')}`,
         });
-      } else {
-        res.status(500).send({ message: 'Произошла ошибка' });
-      }
+      } else res.status(500).send({ message: 'Произошла ошибка' });
     });
 }
-
 function getUser(req, res) {
   User.findById(req.params.userId)
+    .orFail(new Error(`Пользователь ${userId} не найден`))
     .then((user) => res.status(200).send(user))
-    .catch((err) => res.status(500).send({ message: 'Произошла ошибка' }));
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        res.status(400).send({
+          message: `${Object.values(err.errors)
+            .map((error) => error.message)
+            .join(', ')}`,
+        });
+      }
+      if (err.name === 'NotFound') res.status(404).send({ message: 'Пользователь не найден' });
+      else res.status(500).send({ message: 'Произошла ошибка' });
+    });
 }
 
 module.exports = {
